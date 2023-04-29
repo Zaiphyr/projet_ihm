@@ -140,7 +140,7 @@ public class Board extends Application {
                 
             }
         });
-        Button maxGraineMoins = new Button("Nombre de graine +");
+        Button maxGraineMoins = new Button("Nombre de graine -");
         maxGraineMoins.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
