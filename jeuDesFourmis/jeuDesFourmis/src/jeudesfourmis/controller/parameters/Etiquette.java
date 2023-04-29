@@ -19,7 +19,7 @@ public class Etiquette extends HBox {
     public Etiquette(String lab){
         super();
         l.setText(lab);
-        
+        this.getChildren().addAll(l,nombre);
     }
 
     /**
@@ -32,8 +32,8 @@ public class Etiquette extends HBox {
     /**
      * @param l the l to set
      */
-    public void setL(Label l) {
-        this.l = l;
+    public void setL(String l) {
+        this.l.setText(l);
     }
 
     /**
@@ -46,8 +46,8 @@ public class Etiquette extends HBox {
     /**
      * @param nombre the nombre to set
      */
-    public void setNombre(Label nombre) {
-        this.nombre = nombre;
+    public void setNombre(String nombre) {
+        this.nombre.setText(nombre);
     }
     
     

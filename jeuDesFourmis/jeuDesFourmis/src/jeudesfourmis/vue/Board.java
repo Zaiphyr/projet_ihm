@@ -5,20 +5,29 @@
  */
 package jeudesfourmis.vue;
 
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jeudesfourmis.controller.parameters.SliderBetter;
 import jeudesfourmis.controller.parameters.Etiquette;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -42,11 +51,41 @@ public class Board extends Application {
     private int tailleY = 50;
     private int nbGraine = 5;
     private boolean play = false;
+    private Game plate;
+    private Etiquette nbrGraine = new Etiquette("nombre de graines");
+    private Etiquette nbrFourmi = new Etiquette("nombre de fourmis");
+    private Etiquette nbIte = new Etiquette("nombre d'itération");
+    //private SimpleIntegerProperty graine = new SimpleIntegerProperty(0) ,fourmi = new SimpleIntegerProperty(0) ,ite = new SimpleIntegerProperty(0);
+    private ImageView playIV = new ImageView(new Image(getClass().getResourceAsStream("play.png")));
+    private ImageView pauseIV = new ImageView(new Image(getClass().getResourceAsStream("pause.png")));
+    
+    
+    /*Service<Long> etiquetteService = new Service() {
+         @Override
+         protected Task createTask() {
+            Task<Long> etiquetteTask = new Task() {
+            @Override
+            protected Long call() throws Exception {
+                while(true){
+                    
+                    graine.set(plate.nbGraine());
+                    fourmi.set(plate.nbFourmis());
+                    ite.set(plate.getNbIteration());
+                if(isCancelled()){
+                    break;
+                }
+                }
+                return null;
+            }
+            };
+             return etiquetteTask;
+        };
+     };*/
 
     @Override
     public void start(Stage primaryStage) {
         
-        Game plate = new Game(new Fourmiliere(50, 50, 5));
+        plate = new Game(new Fourmiliere(50, 50, 5));
         Button quit = new Button("Quit");
         quit.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -72,7 +111,8 @@ public class Board extends Application {
         });
         
         
-        Button playPause = new Button("Play/Pause");
+        Button playPause = new Button();
+        playPause.setGraphic(playIV);
         playPause.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -80,9 +120,11 @@ public class Board extends Application {
                 if(play){
                    plate.stop();
                    play = false;
+                   playPause.setGraphic(playIV);
                }else{
                     plate.start();
                     play = true;
+                    playPause.setGraphic(pauseIV);
                 }
             }
         });
@@ -91,7 +133,18 @@ public class Board extends Application {
 
             @Override
             public void handle(ActionEvent event) {
-                plate.init();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);  
+                alert.initOwner(primaryStage); 
+                alert.setTitle("Demande de confirmation"); 
+                alert.setHeaderText("attention cela va réinitialiser le plateau"); 
+                alert.setContentText("Souhaitez-vous réinitialiser le plateau ?"); 
+                final Optional<ButtonType> result = alert.showAndWait(); 
+                result.ifPresent(button -> { 
+                    if (button == ButtonType.OK) { 
+                        plate.init();
+                    } 
+                });
+                
             }
         });
         
@@ -104,19 +157,23 @@ public class Board extends Application {
             }
         });
 
-        Etiquette nbrGraine = new Etiquette("nombre de graines");
-        //nbrGraine.setNombre(plate.nbGraine());
-        Etiquette nbrFourmi = new Etiquette("nombre de fourmis");
-       // nbrFourmi.setNombre((plate.nbFourmis()));
-        Etiquette nbIte = new Etiquette("nombre d'itération");
-
         Button sizePlatePlus = new Button("Size +");
         sizePlatePlus.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
-                tailleX++;
-                tailleY++;
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);  
+                alert.initOwner(primaryStage); 
+                alert.setTitle("Demande de confirmation"); 
+                alert.setHeaderText("attention cela va augmenter la taille du plateau"); 
+                alert.setContentText("Souhaitez-vous augmenter la taille le plateau ?"); 
+                final Optional<ButtonType> result = alert.showAndWait(); 
+                result.ifPresent(button -> { 
+                    if (button == ButtonType.OK) {
+                        tailleX++;
+                        tailleY++;
+                    } 
+                });
             }
         });
         Button sizePlateMoins = new Button("Size -");
@@ -124,9 +181,20 @@ public class Board extends Application {
 
             @Override
             public void handle(ActionEvent event) {
+                
                 if(tailleX > 20){
-                    tailleX--;
-                    tailleY--;
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);  
+                    alert.initOwner(primaryStage); 
+                    alert.setTitle("Demande de confirmation"); 
+                    alert.setHeaderText("attention cela va diminuer la taille du plateau"); 
+                    alert.setContentText("Souhaitez-vous diminuer la taille du plateau ?"); 
+                    final Optional<ButtonType> result = alert.showAndWait(); 
+                    result.ifPresent(button -> { 
+                        if (button == ButtonType.OK) {
+                            tailleX--;
+                            tailleY--;
+                        } 
+                    });
                 }
                 
             }
@@ -152,7 +220,7 @@ public class Board extends Application {
         });
 
         SliderBetter vitesse = new SliderBetter("vitesse", 0, 100, 10);
-        vitesse.getTfValue().setOnAction(e -> plate.setVitesse(vitesse.getSlide().getValue()));
+        vitesse.getTfValue().textProperty().addListener(e -> plate.setVitesse(vitesse.getSlide().getValue()));
         
 
         HBox hb_irq = new HBox();
@@ -177,7 +245,19 @@ public class Board extends Application {
         root.getChildren().add(hb);
 
         Scene scene = new Scene(root, 1000,800);
-
+        
+        /*this.nbrGraine.getNombre().textProperty().bind(this.graine.asString());
+        this.nbrFourmi.getNombre().textProperty().bind(this.fourmi.asString());
+        this.nbIte.getNombre().textProperty().bind(this.ite.asString());*/
+        
+        
+        /*this.etiquetteService.start();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println(graine);*/
         plate.afficher();
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);

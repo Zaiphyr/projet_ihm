@@ -69,15 +69,7 @@ public class Game extends GridPane{
     }
     
     public int nbFourmis(){
-        int nbF = 0;
-        for(int i = 0; i <= getF().getHauteur(); i++){
-            for(int j = 0; j <= getF().getLargeur(); j++){
-                if(getF().contientFourmi(i, j) == true){
-                    nbF++ ;
-                }
-            }
-        }
-        return nbF;
+        return f.getLesFourmis().size();
     }
     
     public void placeMur(){
@@ -170,13 +162,14 @@ public class Game extends GridPane{
             @Override
             protected Long call() throws Exception {
                 while(true){
-                Thread.sleep((long) (1000-(9*getVitesse())));
-                if(isCancelled()){
-                    break;
-                }
-                getF().evolue();
-                setNbIteration(getNbIteration() + 1);
-                afficher();
+                    System.out.println(getVitesse());
+                    Thread.sleep((long) (1000-(9*getVitesse())));
+                    if(isCancelled()){
+                        break;
+                    }
+                    getF().evolue();
+                    setNbIteration(getNbIteration() + 1);
+                    afficher();
                 }
                 return null;
             }
