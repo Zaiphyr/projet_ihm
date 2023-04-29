@@ -5,6 +5,8 @@
  */
 package jeudesfourmis.vue;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jeudesfourmis.controller.parameters.SliderBetter;
 import jeudesfourmis.controller.parameters.Etiquette;
 import javafx.application.Application;
@@ -55,6 +57,21 @@ public class Board extends Application {
         });
 
         Button loupe = new Button("Loupe");
+        loupe.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                Loupe l = new Loupe(plate);
+                try {
+                    l.start(new Stage());
+                } catch (Exception ex) {
+                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                l.start();
+            }
+        });
+        
+        
         Button playPause = new Button("Play/Pause");
         playPause.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -62,12 +79,21 @@ public class Board extends Application {
             public void handle(ActionEvent event) {
                 if(play){
                    plate.stop();
+                   play = false;
                }else{
                     plate.start();
+                    play = true;
                 }
             }
         });
         Button reset = new Button("Reset");
+        reset.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                plate.init();
+            }
+        });
         
         Button init = new Button("Init");
         init.setOnAction(new EventHandler<ActionEvent>() {
@@ -152,6 +178,7 @@ public class Board extends Application {
 
         Scene scene = new Scene(root, 1000,800);
 
+        plate.afficher();
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();

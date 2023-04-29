@@ -50,18 +50,18 @@ public class Fourmiliere {
     this.lesFourmis = new LinkedList<Fourmi>(); 
     	
     fourmis = new boolean[hauteur+2][largeur+2];
-    for (int i =0 ; i < hauteur+2 ; i++)
-      for (int j =0 ; j < largeur+2 ; j++)
+    for (int i =0 ; i < hauteur ; i++)
+      for (int j =0 ; j < largeur ; j++)
 	fourmis[i][j] = false ; 
 	
     murs = new boolean[hauteur+2][largeur+2];
-    for (int i =0 ; i < hauteur+2 ; i++)
-      for (int j =0 ; j < largeur+2 ; j++)
-	murs[i][j] = (i==0)||(i==hauteur+1)||(j==0)||(j==largeur+1) ;
+    for (int i =0 ; i < hauteur ; i++)
+      for (int j =0 ; j < largeur ; j++)
+	murs[i][j] = (i==0)||(i==hauteur-1)||(j==0)||(j==largeur-1) ;
 	
     qteGraines = new int[hauteur+2][largeur+2];
-    for (int i =0 ; i < hauteur+2 ; i++)
-      for (int j =0 ; j < largeur+2; j++)
+    for (int i =0 ; i < hauteur ; i++)
+      for (int j =0 ; j < largeur; j++)
 	qteGraines [i][j]=0 ; 
   }
     
@@ -137,7 +137,7 @@ public class Fourmiliere {
     if (!fourmis[y][x] && !murs[y][x]){
       Fourmi f = new Fourmi(x,y,false);
       fourmis[y][x]=true ; 			
-      lesFourmis.add(f);
+            getLesFourmis().add(f);
     };
   }
 		
@@ -197,7 +197,7 @@ public class Fourmiliere {
    *        
    */
   public void evolue() {
-    Iterator<Fourmi> ItFourmi = lesFourmis.iterator();
+    Iterator<Fourmi> ItFourmi = getLesFourmis().iterator();
     while (ItFourmi.hasNext()) {
       Fourmi f = ItFourmi.next();
       int posX = f.getX(); 
@@ -378,5 +378,14 @@ public class Fourmiliere {
       System.out.println(f.stringFourmis());
     }
   }
+
+    /**
+     * @return the lesFourmis
+     */
+    public List<Fourmi> getLesFourmis() {
+        return lesFourmis;
+    }
+  
+  
 
 }

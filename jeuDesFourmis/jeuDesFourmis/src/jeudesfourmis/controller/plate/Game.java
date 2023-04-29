@@ -8,7 +8,12 @@ package jeudesfourmis.controller.plate;
 import java.util.Random;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -16,6 +21,7 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import jeudesfourmis.model.Fourmi;
 import jeudesfourmis.model.Fourmiliere;
 
 /**
@@ -25,23 +31,23 @@ import jeudesfourmis.model.Fourmiliere;
 // doit initialiser la partie et la fenêtre
 public class Game extends GridPane{
 
-    
+    private int currentX;
+    private int currentY;
     private Fourmiliere f ;
     private Label[][] cellules = new Label[0][0];
     private double vitesse;
     private int nbIteration = 0;
     
     public int random(int min, int max){
-        Random rand = new Random(0);
-        int a;
-        a = min+rand.nextInt(max-min);
-        return a;
+        return  (int) (Math.random() * max + min);
     }
     
     public Game(Fourmiliere f){
         
         super();
         this.f = f;
+        
+        
         
         init();
         
@@ -114,7 +120,7 @@ public class Game extends GridPane{
         this.f = f;
     }
     
-    private void init(){
+    public void init(){
         for (int i=0;i<cellules.length;i++){
             for (int j=0;j<cellules.length;j++){
                 this.getChildren().remove(cellules[i][j]);
@@ -125,17 +131,10 @@ public class Game extends GridPane{
         
         cellules = new Label[f.getLargeur()][f.getHauteur()];
         
-        for(int i = 0; i <= f.getLargeur(); i++){
-            for(int j = 0; j <= f.getHauteur(); j++){
-                if(i == 0 || i == f.getLargeur() || j == 0 || j == f.getHauteur()){
-                    f.setMur(i, j, true);
-                }
-                //set fourmi & set graine
-                int randFourmi = random(1,3);
-                if(randFourmi == 1){
-                    f.ajouteFourmi(i, j);
-                }
-                f.setQteGraines(i, j, random(0,5));
+        for(int i = 0; i < f.getLargeur(); i++){
+            for(int j = 0; j < f.getHauteur(); j++){
+                //set graine
+                f.setQteGraines(i, j,random(0,f.getQMax()));
             }      
         }
         
@@ -148,10 +147,15 @@ public class Game extends GridPane{
                 cell.setMaxWidth(10);
                 cell.setMaxHeight(10);
                 cell.setPrefSize(10,10);
+                int x = i;
+                int y = j;
+                cell.setOnMouseClicked(e -> eventLabel(e,x,y));
+                cell.setOnMouseEntered(e -> changeCurent(x,y));
                 this.add(cell, i, j);
                 cellules[i][j] = cell;
             }
         }
+        afficher();
     }
     
     public void reinit(int x , int y, int nbG){
@@ -172,6 +176,7 @@ public class Game extends GridPane{
                 }
                 getF().evolue();
                 setNbIteration(getNbIteration() + 1);
+                afficher();
                 }
                 return null;
             }
@@ -180,6 +185,7 @@ public class Game extends GridPane{
         };
      };
 public void start(){
+      playService.reset();
       playService.start();
     }
 
@@ -215,6 +221,64 @@ public void start(){
         this.nbIteration = nbIteration;
     }
     
+    public void afficher(){
+        for (int i = 0; i < f.getLargeur(); i++) {
+            for (int j = 0; j < f.getHauteur(); j++) {
+                if(f.getMur(i, j)){
+                    cellules[i][j].setBackground(new Background( new BackgroundFill( Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+                else if(f.contientFourmi(i, j)){
+                    for(Fourmi fourmi : f.getLesFourmis()){
+                        if(fourmi.getX()==i && fourmi.getY() == j){
+                            if(fourmi.porte()){
+                                cellules[i][j].setText("O");
+                                cellules[i][j].setStyle("-fx-text-fill: blue; -fx-font-size: 8px;");
+                            }
+                            else{
+                                cellules[i][j].setText("O");
+                                cellules[i][j].setStyle("-fx-text-fill: green; -fx-font-size: 8px;");
+                            }
+                            break;
+                        }
+                    }
+                }
+                else{
+                    int taille = (8 * f.getQteGraines(i, j)) / f.getQMax();
+                    cellules[i][j].setText("O");
+                    cellules[i][j].setStyle("-fx-text-fill: red; -fx-font-size: "+ taille +"px;");
+                }
+            }
+        }
+    }
     
+    public void eventLabel(MouseEvent e,int x, int y){
+        
+        if (e.isShiftDown()){
+            f.ajouteFourmi(x, y);
+        }else{
+            f.setMur(x, y,true);
+        }
+        
+        afficher();
+    }
+
+    /**
+     * @return the cuurentX
+     */
+    public int getCurrentX() {
+        return currentX;
+    }
+
+    /**
+     * @return the currentY
+     */
+    public int getCurrentY() {
+        return currentY;
+    }
+
+    private void changeCurent(int x, int y) {
+        this.currentX = x;
+        this.currentY = y;
+    }
     
 }
