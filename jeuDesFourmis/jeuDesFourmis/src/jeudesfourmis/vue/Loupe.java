@@ -49,10 +49,10 @@ public class Loupe extends Application{
                         new CornerRadii(1), new BorderWidths(1))));
         
         
-        for(int i = 0; i < 11 ; i++){
+        for(int i = 0; i < 11 ; i++){ //même principe que la fenêtre principal mais en plus petit
             for(int j = 0; j < 11 ; j++){
                 Label cell = new Label(" ");
-                cell.setMinWidth(30);
+                cell.setMinWidth(30); // pour effectuer un effet de zoom tout les composants sont agrandit
                 cell.setMinHeight(30);
                 cell.setMaxWidth(30);
                 cell.setMaxHeight(30);

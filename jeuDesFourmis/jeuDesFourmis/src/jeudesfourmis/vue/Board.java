@@ -12,31 +12,17 @@ import jeudesfourmis.controller.parameters.SliderBetter;
 import jeudesfourmis.controller.parameters.Etiquette;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jeudesfourmis.controller.plate.Game;
 import jeudesfourmis.model.Fourmiliere;
@@ -60,7 +46,7 @@ public class Board extends Application {
     private ImageView pauseIV = new ImageView(new Image(getClass().getResourceAsStream("pause.png")));
     
     
-    /*Service<Long> etiquetteService = new Service() {
+    /*Service<Long> etiquetteService = new Service() { essai du service pour compter le nombre de fourmis, graines et itérations
          @Override
          protected Task createTask() {
             Task<Long> etiquetteTask = new Task() {
@@ -85,7 +71,7 @@ public class Board extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        plate = new Game(new Fourmiliere(50, 50, 5));
+        plate = new Game(new Fourmiliere(50, 50, 5)); //Plateau de jeu initialiser avec les données du sujet à par pour le nombre max de graîne qui a été choisi par nos soins
         Button quit = new Button("Quit");
         quit.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -106,7 +92,7 @@ public class Board extends Application {
                 } catch (Exception ex) {
                     Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                l.start();
+                l.start(); //ouvre une nouvelle fenêtre pour zoomer
             }
         });
         
@@ -117,7 +103,7 @@ public class Board extends Application {
 
             @Override
             public void handle(ActionEvent event) {
-                if(play){
+                if(play){ //vérification si le jeu est en pause ou non
                    plate.stop();
                    play = false;
                    playPause.setGraphic(playIV);
@@ -133,7 +119,7 @@ public class Board extends Application {
 
             @Override
             public void handle(ActionEvent event) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);  
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION); //ouverture de la fenetre de confirmation 
                 alert.initOwner(primaryStage); 
                 alert.setTitle("Demande de confirmation"); 
                 alert.setHeaderText("attention cela va réinitialiser le plateau"); 
@@ -222,7 +208,7 @@ public class Board extends Application {
         SliderBetter vitesse = new SliderBetter("vitesse", 0, 100, 10);
         vitesse.getTfValue().textProperty().addListener(e -> plate.setVitesse(vitesse.getSlide().getValue()));
         
-
+        //organisation de la fenêtre d'affichage
         HBox hb_irq = new HBox();
         hb_irq.getChildren().addAll(init, reset, quit);
 

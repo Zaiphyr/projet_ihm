@@ -5,10 +5,8 @@
  */
 package jeudesfourmis.controller.plate;
 
-import java.util.Random;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -32,7 +30,7 @@ import jeudesfourmis.model.Fourmiliere;
 public class Game extends GridPane{
 
     private int currentX;
-    private int currentY;
+    private int currentY; //  
     private Fourmiliere f ;
     private Label[][] cellules = new Label[0][0];
     private double vitesse;
@@ -46,13 +44,8 @@ public class Game extends GridPane{
         
         super();
         this.f = f;
-        
-        
-        
         init();
-        
         this.setGridLinesVisible(true);
-        
         this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID,
                         new CornerRadii(1), new BorderWidths(1))));
     }
@@ -62,7 +55,7 @@ public class Game extends GridPane{
         int nbG = 0;
         for(int i = 0; i <= getF().getHauteur(); i++){
             for(int j = 0; j <= getF().getLargeur(); j++){
-               nbG = nbG + getF().getQteGraines(i, j);
+               nbG = nbG + getF().getQteGraines(i, j); // additionne le nombre de graine sur la case avec le reste des graine
             }
         }
         return nbG;   
@@ -71,15 +64,6 @@ public class Game extends GridPane{
     public int nbFourmis(){
         return f.getLesFourmis().size();
     }
-    
-    public void placeMur(){
-        f.setMur(REMAINING, REMAINING, true); //TODO
-    }
-    
-    public void placeFourmi(){
-        f.ajouteFourmi(REMAINING, REMAINING);//TODO
-    }
-
     
     
     /**
@@ -115,7 +99,7 @@ public class Game extends GridPane{
     public void init(){
         for (int i=0;i<cellules.length;i++){
             for (int j=0;j<cellules.length;j++){
-                this.getChildren().remove(cellules[i][j]);
+                this.getChildren().remove(cellules[i][j]); //vide toute le cellules de la grille
             }
         }
         
@@ -125,8 +109,8 @@ public class Game extends GridPane{
         
         for(int i = 0; i < f.getLargeur(); i++){
             for(int j = 0; j < f.getHauteur(); j++){
-                //set graine
-                f.setQteGraines(i, j,random(0,f.getQMax()));
+                
+                f.setQteGraines(i, j,random(0,f.getQMax())); //ajoute une quantitée aléatoire comprises entre 0 et la quantité Max
             }      
         }
         
@@ -138,7 +122,7 @@ public class Game extends GridPane{
                 cell.setMinHeight(10);
                 cell.setMaxWidth(10);
                 cell.setMaxHeight(10);
-                cell.setPrefSize(10,10);
+                cell.setPrefSize(10,10); // ces lignes obligent les cases à faire exactement 10x10 
                 int x = i;
                 int y = j;
                 cell.setOnMouseClicked(e -> eventLabel(e,x,y));
@@ -163,8 +147,8 @@ public class Game extends GridPane{
             protected Long call() throws Exception {
                 while(true){
                     System.out.println(getVitesse());
-                    Thread.sleep((long) (1000-(9*getVitesse())));
-                    if(isCancelled()){
+                    Thread.sleep((long) (1000-(9*getVitesse()))); // permet de gérer la vitesse d'évolution de la colonie en fonction du slide
+                    if(isCancelled()){ // si le jeu est en cours on mets sur pause
                         break;
                     }
                     getF().evolue();
@@ -236,7 +220,7 @@ public void start(){
                     }
                 }
                 else{
-                    int taille = (8 * f.getQteGraines(i, j)) / f.getQMax();
+                    int taille = (8 * f.getQteGraines(i, j)) / f.getQMax();  //affiche un O plus ou moins gros selon le nombre de graine
                     cellules[i][j].setText("O");
                     cellules[i][j].setStyle("-fx-text-fill: red; -fx-font-size: "+ taille +"px;");
                 }
