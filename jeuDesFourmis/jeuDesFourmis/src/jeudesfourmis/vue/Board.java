@@ -245,7 +245,7 @@ public class Board extends Application {
         }
         System.out.println(graine);*/
         plate.afficher();
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("une fourmilière");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
